@@ -19,7 +19,9 @@
                 <RadzenChart>
                     <RadzenAreaSeries Smooth="true" Data="@data" CategoryProperty="Time" Title="Log" LineType="LineType.Dashed" ValueProperty="Duration">
                     </RadzenAreaSeries>
-                    <RadzenCategoryAxis Padding="20" Formatter="@FormatAsTime" />
+                    <RadzenCategoryAxis Padding="20" Formatter="@FormatAsTime" >
+                        <RadzenAxisTitle Text="Time (HH:mm)" />
+                    </RadzenCategoryAxis>
                     <RadzenValueAxis Formatter="@FormatAsMinute">
                         <RadzenGridLines Visible="true" />
                         <RadzenAxisTitle Text="Duration (minutes)" />
@@ -80,6 +82,7 @@
         }
 
         RenderGraph(datelist[0]);
+        Console.WriteLine(datelist.Last().Date);
     }
 
     private void RenderGraph(DateTime? selectedTime)
