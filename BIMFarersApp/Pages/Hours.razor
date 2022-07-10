@@ -1,0 +1,185 @@
+﻿@page "/hours"
+@using System.Globalization
+@inject HttpClient Http
+
+<h1>Revit Hours</h1>
+    <div class="container my-5">
+        <div class="row">
+            <div class="col">
+                @if (data == null)
+                {
+                <p><em>Loading...</em></p>
+            }
+            else
+            {
+                <RadzenCard Class="w-100 mb-4" >
+                    <RadzenLabel Text="@totalhour.ToString("#.##")" Style="margin-left: 8px; vertical-align: middle;" />
+                    <RadzenDatePicker TValue="DateTime?" DateRender=@DateRender Change=@(args => OnChange(args, "DatePicker with disabled dates", "MM/dd/yyyy")) Class="w-100" />
+                </RadzenCard>
+                <RadzenChart>
+                    <RadzenAreaSeries Smooth="true" Data="@data" CategoryProperty="Time" Title="Log" LineType="LineType.Dashed" ValueProperty="Duration">
+                    </RadzenAreaSeries>
+                    <RadzenCategoryAxis Padding="20" Formatter="@FormatAsTime" />
+                    <RadzenValueAxis Formatter="@FormatAsMinute">
+                        <RadzenGridLines Visible="true" />
+                        <RadzenAxisTitle Text="Duration (minutes)" />
+                    </RadzenValueAxis>
+                </RadzenChart>
+            }
+            </div>
+        </div>
+    </div>
+@code {
+    double totalhour = 0;
+
+    public class Foo
+    {
+        public string Start { get; set; }
+        public string End { get; set; }
+        public double Duration { get; set; }
+        public string User { get; set; }
+        public string Entry { get; set; }
+        public string File { get; set; }
+        public double UID { get; set; }
+        public string View { get; set; }
+        public string Type { get; set; }
+    }
+
+    public class Pro
+    {
+        public string Time{ get; set; }
+        public double Duration{ get; set; }
+    }
+
+    private Foo[]? rawdata;
+    private Pro[]? data;
+    private List<DateTime> datelist = new();
+    private string format = "d/MM/yyyy H:mm";
+
+    protected override async Task OnInitializedAsync()
+    {
+        rawdata = await Http.GetFromJsonAsync<Foo[]>("sample-data/hourlog.json");
+
+        //Get 1st element to determine x-axis start
+        var start = DateTime.ParseExact(rawdata.First().Start, format, CultureInfo.InvariantCulture);
+        //var axisStart = Extensions.RoundDownToNearest30(start);
+        //Get last element to determine x-axis end
+        var end = DateTime.ParseExact(rawdata.Last().End, format, CultureInfo.InvariantCulture);
+        //var axisEnd = Extensions.RoundUpToNearest30(end);
+
+        //Sets up Date Range
+        var startDate = DateTime.ParseExact(rawdata.First().Start, format, CultureInfo.InvariantCulture).Date;
+        datelist.Add(startDate);
+        foreach(var raw in rawdata)
+        {
+            var rawDate = DateTime.ParseExact(raw.Start, format, CultureInfo.InvariantCulture).Date;
+            if (datelist.Contains(rawDate))
+                continue;
+            else
+                datelist.Add(rawDate);
+        }
+
+        RenderGraph(datelist[0]);
+    }
+
+    private void RenderGraph(DateTime? selectedTime)
+    {
+        var filteredlist = rawdata.Where(x => DateTime.ParseExact(x.Start, format, CultureInfo.InvariantCulture).Date == selectedTime);
+        //Get 1st element to determine x-axis start
+        var filteredstart = DateTime.ParseExact(filteredlist.First().Start, format, CultureInfo.InvariantCulture);
+        var axisStart = Extensions.RoundDownToNearest30(filteredstart);
+        //Get last element to determine x-axis end
+        var filteredend = DateTime.ParseExact(filteredlist.Last().End, format, CultureInfo.InvariantCulture);
+        var axisEnd = Extensions.RoundUpToNearest30(filteredend);
+
+        //Sets up Data List with the correct x-axis
+        var datalist = new List<Pro>();
+        for(DateTime i = axisStart; i < axisEnd; i = i.AddMinutes(30))
+        {
+            datalist.Add(new Pro { Time = i.ToString("d/MM/yyyy H:mm"), Duration = 0 });
+        }
+
+        foreach(var x in datalist)
+        {
+            var xTime = DateTime.ParseExact(x.Time, format, CultureInfo.InvariantCulture);
+            var xplus30 = xTime.AddMinutes(30);
+
+            foreach(var raw in filteredlist)
+            {
+                var rawEnd = DateTime.ParseExact(raw.End, format, CultureInfo.InvariantCulture);
+                if (rawEnd < xTime)
+                    continue;
+
+                var rawStart = DateTime.ParseExact(raw.Start, format, CultureInfo.InvariantCulture);
+                if (rawStart > xplus30)
+                    continue;
+
+                if (rawStart < xTime)
+                {
+                    if (rawEnd >= xplus30)
+                    {
+                        x.Duration = 1800;
+                        break;
+                    }
+                    else
+                    {
+                        var span = rawEnd.Subtract(xTime);
+                        x.Duration += span.TotalSeconds;
+                    }
+                }
+                else //if rawStart >= xTime
+                {
+                    if (rawEnd >= xplus30)
+                    {
+                        var span = xplus30.Subtract(rawStart);
+                        x.Duration += span.TotalSeconds;
+                        break;
+                    }
+                    else
+                    {
+                        var span = rawEnd.Subtract(rawStart);
+                        x.Duration += span.TotalSeconds;
+                    }
+                }
+            }
+
+            totalhour += x.Duration/3600;
+        }
+
+        data = datalist.ToArray();
+    }
+
+    string FormatAsMinute(object value)
+    {
+        return ((double)value/60).ToString("#.##");
+    }
+
+    string FormatAsTime(object value)
+    {
+        if (value != null)
+        {
+            return Convert.ToDateTime(value).ToString("HH:mm");
+        }
+
+        return string.Empty;
+    }
+
+    void DateRender(DateRenderEventArgs args)
+    {
+        args.Disabled = args.Disabled || !datelist.Contains(args.Date);
+    }
+
+    void OnChange(DateTime? value, string name, string format)
+    {
+        Console.WriteLine($"{name} value changed to {value?.ToString(format)}");
+        try
+        {
+            totalhour = 0;
+            RenderGraph(value?.Date);
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine("Something's wrong?? " + ex.Message);
+        }
+    }
+}
