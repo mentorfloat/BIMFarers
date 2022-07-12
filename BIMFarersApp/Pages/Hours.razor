@@ -14,10 +14,10 @@
             {
                 <RadzenCard Class="w-100 mb-4" >
                     <RadzenLabel Text="@totalhour.ToString("#.##")" Style="margin-left: 8px; vertical-align: middle;" />
-                    <RadzenDatePicker TValue="DateTime?" DateRender=@DateRender Change=@(args => OnChange(args, "DatePicker with disabled dates", "MM/dd/yyyy")) Class="w-100" />
+                    <RadzenDatePicker TValue="DateTime?" DateFormat="d/MM/yyyy" DateRender=@DateRender Change=@(args => OnChange(args, "DatePicker with disabled dates", "MM/dd/yyyy")) Class="w-100" />
                 </RadzenCard>
                 <RadzenChart>
-                    <RadzenAreaSeries Smooth="true" Data="@data" CategoryProperty="Time" Title="Log" LineType="LineType.Dashed" ValueProperty="Duration">
+                    <RadzenAreaSeries Smooth="true" Data="@data" CategoryProperty="Time" LineType="LineType.Dashed" ValueProperty="Duration">
                     </RadzenAreaSeries>
                     <RadzenCategoryAxis Padding="20" Formatter="@FormatAsTime" >
                         <RadzenAxisTitle Text="Time (HH:mm)" />
@@ -62,16 +62,7 @@
     {
         rawdata = await Http.GetFromJsonAsync<Foo[]>("sample-data/hourlog.json");
 
-        //Get 1st element to determine x-axis start
-        var start = DateTime.ParseExact(rawdata.First().Start, format, CultureInfo.InvariantCulture);
-        //var axisStart = Extensions.RoundDownToNearest30(start);
-        //Get last element to determine x-axis end
-        var end = DateTime.ParseExact(rawdata.Last().End, format, CultureInfo.InvariantCulture);
-        //var axisEnd = Extensions.RoundUpToNearest30(end);
-
         //Sets up Date Range
-        var startDate = DateTime.ParseExact(rawdata.First().Start, format, CultureInfo.InvariantCulture).Date;
-        datelist.Add(startDate);
         foreach(var raw in rawdata)
         {
             var rawDate = DateTime.ParseExact(raw.Start, format, CultureInfo.InvariantCulture).Date;
@@ -82,7 +73,6 @@
         }
 
         RenderGraph(datelist[0]);
-        Console.WriteLine(datelist.Last().Date);
     }
 
     private void RenderGraph(DateTime? selectedTime)
