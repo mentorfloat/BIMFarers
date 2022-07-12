@@ -105,11 +105,11 @@
       "url": "_framework\/icudt.dat"
     },
     {
-      "hash": "sha256-uZ4B5eCazx++EraBGDYZv0ge\/e7EVWI\/9yooKTPn6uw=",
+      "hash": "sha256-xfGoKTPHcXAxpwMHgSbuPI\/0gUoO1Ctjco1c6yT7D4Q=",
       "url": "_framework\/blazor.boot.json"
     },
     {
-      "hash": "sha256-VBROztShqTJAYo2rkoT1aFR9j\/DqwtH2JUjbzwL\/lFI=",
+      "hash": "sha256-Ml7LICln0Kc8+eCh18ag2MnUeXnLDLamCcgV77xP\/VE=",
       "url": "_framework\/BIMFarersApp.dll"
     },
     {
@@ -213,7 +213,7 @@
       "url": "_framework\/System.ComponentModel.TypeConverter.dll"
     },
     {
-      "hash": "sha256-cvd++N4FY9NG2juxPiQ5nNZYiqR4SBmotw3oCQQ10sg=",
+      "hash": "sha256-HDSTbxB+2sG73y91NL0ioQ1EFORAa39a0BpGlMRvTVQ=",
       "url": "_framework\/System.Console.dll"
     },
     {
@@ -265,7 +265,7 @@
       "url": "_framework\/System.ObjectModel.dll"
     },
     {
-      "hash": "sha256-Th3b\/iem2zG9zVlGP9I1KjW8SQg8yyJpEzRAL4bMDOo=",
+      "hash": "sha256-bspEoc2kMMJGWTN\/WIqqnqxhbCw2quKaf8B11jcZRPc=",
       "url": "_framework\/System.Private.CoreLib.dll"
     },
     {
@@ -323,6 +323,10 @@
     {
       "hash": "sha256-09Km236k4XvXA9kNuWEagFDU6jDct+zzr0v+pmUmg7o=",
       "url": "_framework\/System.Threading.dll"
+    },
+    {
+      "hash": "sha256-RpiDJQkboczv54e12aM26diYI1YTlfQknmqR0R7Cw34=",
+      "url": "_framework\/System.Threading.Thread.dll"
     },
     {
       "hash": "sha256-DzgZvev4kNfWWVTmaoymBoPWJOI14SnH+aQExQak55I=",
@@ -445,5 +449,5 @@
       "url": "_content\/Radzen.Blazor\/Radzen.Blazor.js"
     }
   ],
-  "version": "MPSKfmYY"
+  "version": "BknnXAfa"
 };
