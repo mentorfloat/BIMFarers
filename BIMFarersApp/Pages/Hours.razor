@@ -6,7 +6,7 @@
     <div class="container my-5">
         <div class="row">
             <div class="col">
-                @if (data == null)
+                @if (data == null || viewdata == null)
                 {
                 <p><em>Loading...</em></p>
             }
@@ -27,6 +27,21 @@
                         <RadzenAxisTitle Text="Duration (minutes)" />
                     </RadzenValueAxis>
                 </RadzenChart>
+                <div class="col-sm-12 col-lg-6 offset-lg-3 my-5">
+                    <RadzenChart>
+                        <RadzenDonutSeries Data="@viewdata" CategoryProperty="View" ValueProperty="Duration">
+                            <TitleTemplate>
+                                <div class="rz-donut-content">
+                                    <div>Top Active</div> 
+                                    <div>Views</div>
+                                </div>
+                            </TitleTemplate>
+                        </RadzenDonutSeries>
+                        <RadzenValueAxis Formatter="@FormatAsMinute">
+                            <RadzenAxisTitle Text="Duration (minutes)" />
+                        </RadzenValueAxis>
+                    </RadzenChart>
+                </div>
             }
             </div>
         </div>
@@ -53,8 +68,15 @@
         public double Duration{ get; set; }
     }
 
+    public class Views
+    {
+        public string View{ get; set; }
+        public double Duration{ get; set; }
+    }
+
     private Foo[]? rawdata;
     private Pro[]? data;
+    private Views[]? viewdata;
     private List<DateTime> datelist = new();
     private string format = "d/MM/yyyy H:mm";
 
@@ -73,6 +95,7 @@
         }
 
         RenderGraph(datelist[0]);
+        RenderDonut(datelist[0]);
     }
 
     private void RenderGraph(DateTime? selectedTime)
@@ -142,6 +165,33 @@
         data = datalist.ToArray();
     }
 
+    private void RenderDonut(DateTime? selectedTime)
+    {
+        var filteredlist = rawdata.Where(x => DateTime.ParseExact(x.Start, format, CultureInfo.InvariantCulture).Date == selectedTime);
+        List<Views> viewdatas = new();
+        List<string> viewlist = new();
+
+        foreach(var data in filteredlist)
+        {
+            if (viewlist.Contains(data.View))
+                continue;
+            else
+                viewlist.Add(data.View);
+        }
+
+        foreach(var view in viewlist)
+        {
+            var viewdurations = filteredlist.Where(v => v.View == view);
+            double viewduration = 0;
+            foreach (var v in viewdurations)
+                viewduration += v.Duration;
+
+            viewdatas.Add(new() { View = view, Duration = viewduration });
+        }
+
+        viewdata = viewdatas.ToArray();
+    }
+
     string FormatAsMinute(object value)
     {
         return ((double)value/60).ToString("#.##");
@@ -169,6 +219,7 @@
         {
             totalhour = 0;
             RenderGraph(value?.Date);
+            RenderDonut(value?.Date);
         }
         catch(Exception ex)
         {
