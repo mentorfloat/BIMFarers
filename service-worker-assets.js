@@ -69,7 +69,7 @@
       "url": "manifest.json"
     },
     {
-      "hash": "sha256-i26fgPlsq7IHktqpgOC8Z\/k11xy64ufe507TradGlc0=",
+      "hash": "sha256-cdqypMhrUkYZ+F5T4bAAjnMz+\/q+YVznkpxhjk2Rtco=",
       "url": "sample-data\/hourlog.json"
     },
     {
@@ -105,11 +105,11 @@
       "url": "_framework\/icudt.dat"
     },
     {
-      "hash": "sha256-GhGkuLsln3BKFZC43O5hn7tByyxVs62eHh\/ZvHHmHM8=",
+      "hash": "sha256-F7CBdyIlb8DIFPB\/CdJeWJGniWiOinQ9v39tQ2iHdOE=",
       "url": "_framework\/blazor.boot.json"
     },
     {
-      "hash": "sha256-6GXxELqrQe8Nd7MFwwWFjXUIpH+GpCXbIOrqSqpPj90=",
+      "hash": "sha256-5UxZ2n2Mu07cTRKrdvGWqeTXtxnZnOGHQI996uJPQbA=",
       "url": "_framework\/BIMFarersApp.dll"
     },
     {
@@ -265,7 +265,7 @@
       "url": "_framework\/System.ObjectModel.dll"
     },
     {
-      "hash": "sha256-67PO6oJZjjI3W1bdGWFUXIghZNAyXBlTNYDS3853\/KY=",
+      "hash": "sha256-oVKzf7WTOQz7n6aQvogRdhJ3SPloWAqVNhMJW0EvHhU=",
       "url": "_framework\/System.Private.CoreLib.dll"
     },
     {
@@ -449,5 +449,5 @@
       "url": "_content\/Radzen.Blazor\/Radzen.Blazor.js"
     }
   ],
-  "version": "GfgZi+XV"
+  "version": "c6GnhSRz"
 };
