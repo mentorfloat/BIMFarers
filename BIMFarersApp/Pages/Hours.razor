@@ -2,47 +2,90 @@
 @using System.Globalization
 @inject HttpClient Http
 
+<style>
+    .rz-legend-item-text {
+        font-size: small;
+    }
+
+    .rz-donut-content {
+        font-size: small;
+    }
+
+    .rz-category-axis .rz-tick-text {
+        font-size: small;
+    }
+
+    @@media only screen and (max-width: 1100px) {
+        .rz-category-axis .rz-tick-text {
+            visibility: hidden;
+        }
+    }
+
+    @@media only screen and (min-width: 1200px) and (max-width: 1400px) {
+        .rz-category-axis .rz-tick-text {
+            visibility: hidden;
+        }
+    }
+
+    @@media only screen and (max-width: 1500px) {
+        .rz-category-axis .rz-tick-text {
+            font-size: 0.7vw;
+        }
+    }
+
+    @@media only screen and (max-width: 1650px) {
+        .rz-category-axis .rz-tick-text {
+            font-size: 0.8vw;
+        }
+    }
+</style>
+
 <h1>Revit Hours</h1>
     <div class="container my-5">
         <div class="row">
             <div class="col">
                 @if (data == null || viewdata == null)
                 {
-                <p><em>Loading...</em></p>
-            }
-            else
-            {
-                <RadzenCard Class="w-100 mb-4" >
-                    <RadzenLabel Text="@totalhour.ToString("#.##")" Style="margin-left: 8px; vertical-align: middle;" />
-                    <RadzenDatePicker TValue="DateTime?" DateFormat="d/MM/yyyy" DateRender=@DateRender Change=@(args => OnChange(args, "DatePicker with disabled dates", "MM/dd/yyyy")) Class="w-100" />
-                </RadzenCard>
-                <RadzenChart>
-                    <RadzenAreaSeries Smooth="true" Data="@data" CategoryProperty="Time" LineType="LineType.Dashed" ValueProperty="Duration">
-                    </RadzenAreaSeries>
-                    <RadzenCategoryAxis Padding="20" Formatter="@FormatAsTime" >
-                        <RadzenAxisTitle Text="Time (HH:mm)" />
-                    </RadzenCategoryAxis>
-                    <RadzenValueAxis Formatter="@FormatAsMinute">
-                        <RadzenGridLines Visible="true" />
-                        <RadzenAxisTitle Text="Duration (minutes)" />
-                    </RadzenValueAxis>
-                </RadzenChart>
-                <div class="col-sm-12 col-lg-6 offset-lg-3 my-5">
-                    <RadzenChart>
-                        <RadzenDonutSeries Data="@viewdata" CategoryProperty="View" ValueProperty="Duration">
-                            <TitleTemplate>
-                                <div class="rz-donut-content">
-                                    <div>Top Active</div> 
-                                    <div>Views</div>
-                                </div>
-                            </TitleTemplate>
-                        </RadzenDonutSeries>
-                        <RadzenValueAxis Formatter="@FormatAsMinute">
-                            <RadzenAxisTitle Text="Duration (minutes)" />
-                        </RadzenValueAxis>
-                    </RadzenChart>
-                </div>
-            }
+                    <p><em>Loading...</em></p>
+                }
+                else
+                {
+                    <RadzenCard Class="w-100 mb-4" >
+                        <RadzenLabel Text="@totalhour.ToString("#.##")" Style="margin-left: 8px; vertical-align: middle;" />
+                        <RadzenDatePicker TValue="DateTime?" DateFormat="MMM dd" DateRender=@DateRender Change=@(args => OnChange(args, "DatePicker with disabled dates", "MM/dd/yyyy")) Class="w-100" />
+                    </RadzenCard>
+                    <div class="d-flex flex-column flex-xl-row">
+                        <div class="col-12 col-xl-8 my-5">
+                            <RadzenChart>
+                                <RadzenAreaSeries Smooth="true" Data="@data" CategoryProperty="Time" LineType="LineType.Dashed" ValueProperty="Duration">
+                                </RadzenAreaSeries>
+                                <RadzenLegend Visible="false" />
+                                <RadzenCategoryAxis Formatter="@FormatAsTime">
+                                    <RadzenAxisTitle Text="Time (HH:mm)" />
+                                </RadzenCategoryAxis>
+                                <RadzenValueAxis Formatter="@FormatAsMinute">
+                                    <RadzenGridLines Visible="true" />
+                                    <RadzenAxisTitle Text="Duration (minutes)" />
+                                </RadzenValueAxis>
+                            </RadzenChart>
+                        </div>
+                        <div class="col-12 col-xl-4 my-5">
+                            <RadzenChart>
+                                <RadzenDonutSeries Data="@viewdata" CategoryProperty="View" ValueProperty="Duration">
+                                    <TitleTemplate>
+                                        <div class="rz-donut-content">
+                                            <div>Top 8</div> 
+                                            <div>Active Views</div>
+                                        </div>
+                                    </TitleTemplate>
+                                </RadzenDonutSeries>
+                                <RadzenValueAxis Formatter="@FormatAsMinute">
+                                    <RadzenAxisTitle Text="Duration (minutes)" />
+                                </RadzenValueAxis>
+                            </RadzenChart>
+                        </div>
+                    </div>
+                }
             </div>
         </div>
     </div>
@@ -94,8 +137,8 @@
                 datelist.Add(rawDate);
         }
 
-        RenderGraph(datelist[0]);
-        RenderDonut(datelist[0]);
+        RenderGraph(datelist.Last());
+        RenderDonut(datelist.Last());
     }
 
     private void RenderGraph(DateTime? selectedTime)
@@ -189,7 +232,7 @@
             viewdatas.Add(new() { View = view, Duration = viewduration });
         }
 
-        viewdata = viewdatas.ToArray();
+        viewdata = viewdatas.OrderByDescending(d => d.Duration).Take(8).ToArray();
     }
 
     string FormatAsMinute(object value)
@@ -201,7 +244,9 @@
     {
         if (value != null)
         {
-            return Convert.ToDateTime(value).ToString("HH:mm");
+            DateTimeFormatInfo auDtfi = new CultureInfo("en-AU", false).DateTimeFormat;
+            string result = Convert.ToDateTime(value, auDtfi).ToString("HH:mm");
+            return result;
         }
 
         return string.Empty;
