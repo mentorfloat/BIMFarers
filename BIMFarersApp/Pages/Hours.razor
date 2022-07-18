@@ -3,40 +3,119 @@
 @inject HttpClient Http
 
 <style>
+    .center {
+      width: 100%;
+      height: 300px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .lds-ellipsis {
+      position: relative;
+      width: 76px;
+      height: 80px;
+      justify-content: center;
+    }
+    .lds-ellipsis div {
+      position: absolute;
+      top: 33px;
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      background: #F40042;
+      animation-timing-function: cubic-bezier(0, 1, 1, 0);
+    }
+    .lds-ellipsis div:nth-child(1) {
+      left: 8px;
+      animation: lds-ellipsis1 0.6s infinite;
+    }
+    .lds-ellipsis div:nth-child(2) {
+      left: 8px;
+      animation: lds-ellipsis2 0.6s infinite;
+    }
+    .lds-ellipsis div:nth-child(3) {
+      left: 32px;
+      animation: lds-ellipsis2 0.6s infinite;
+    }
+    .lds-ellipsis div:nth-child(4) {
+      left: 56px;
+      animation: lds-ellipsis3 0.6s infinite;
+    }
+    @@keyframes lds-ellipsis1 {
+      0% {
+        transform: scale(0);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+    @@keyframes lds-ellipsis3 {
+      0% {
+        transform: scale(1);
+      }
+      100% {
+        transform: scale(0);
+      }
+    }
+    @@keyframes lds-ellipsis2 {
+      0% {
+        transform: translate(0, 0);
+      }
+      100% {
+        transform: translate(24px, 0);
+      }
+    }
+
     .rz-legend-item-text {
         font-size: small;
     }
-
     .rz-donut-content {
         font-size: small;
     }
-
     .rz-category-axis .rz-tick-text {
         font-size: small;
     }
-
     @@media only screen and (max-width: 1100px) {
         .rz-category-axis .rz-tick-text {
             visibility: hidden;
         }
     }
-
     @@media only screen and (min-width: 1200px) and (max-width: 1400px) {
         .rz-category-axis .rz-tick-text {
             visibility: hidden;
         }
     }
-
     @@media only screen and (max-width: 1500px) {
         .rz-category-axis .rz-tick-text {
             font-size: 0.7vw;
         }
     }
-
     @@media only screen and (max-width: 1650px) {
         .rz-category-axis .rz-tick-text {
             font-size: 0.8vw;
         }
+    }
+
+    .rz-column-series.rz-series-0 {
+        transform-origin: 0 68%;
+
+        animation-duration: 1s;
+        animation-delay: 0s;
+        animation-name: slideUpBars;
+
+        -webkit-animation-timing-function: ease-in-out; /* Safari and Chrome */
+        -moz-animation-timing-function: ease-in-out; /* Safari and Chrome */    
+        -o-animation-timing-function: ease-in-out; /* Safari and Chrome */
+        animation-timing-function: ease-in-out;
+    }
+    @@keyframes slideUpBars {
+      0% {
+        transform: scaleY(0);
+      }
+      100% {
+        transform: scaleY(1);
+      }
     }
 </style>
 
@@ -44,20 +123,23 @@
     <div class="container my-5">
         <div class="row">
             <div class="col">
-                @if (data == null || viewdata == null)
-                {
-                    <p><em>Loading...</em></p>
-                }
-                else
-                {
-                    <RadzenCard Class="w-100 mb-4" >
-                        <RadzenLabel Text="@totalhour.ToString("#.##")" Style="margin-left: 8px; vertical-align: middle;" />
-                        <RadzenDatePicker TValue="DateTime?" DateFormat="MMM dd" DateRender=@DateRender Change=@(args => OnChange(args, "DatePicker with disabled dates", "MM/dd/yyyy")) Class="w-100" />
-                    </RadzenCard>
-                    <div class="d-flex flex-column flex-xl-row">
-                        <div class="col-12 col-xl-8 my-5">
+                <RadzenCard Class="w-100 mb-4" >
+                    <RadzenLabel Text="@("Daily Revit Hours: " + dailyhour.ToString("#.##"))" Style="margin-left: 8px; vertical-align: middle;" />
+                    <RadzenLabel Text="@("Weekly Revit Hours: " + weeklyhour.ToString("#.##"))" Style="margin-left: 8px; vertical-align: middle;" />
+                    <RadzenDatePicker TValue="DateTime?" DateFormat="MMM dd" DateRender=@DateRender Change=@(args => OnChange(args, "DatePicker with disabled dates", "MM/dd/yyyy")) Class="w-100" />
+                </RadzenCard>
+                <div class="d-flex flex-column flex-xl-row">
+                    <div class="col-12 col-xl-8 my-4 px-1">
+                        @if (timedata == null)
+                        {
+                            <RadzenCard class="center">
+                                <div class="lds-ellipsis d-flex"><div></div><div></div><div></div><div></div></div>
+                            </RadzenCard>
+                        }
+                        else
+                        {
                             <RadzenChart>
-                                <RadzenAreaSeries Smooth="true" Data="@data" CategoryProperty="Time" LineType="LineType.Dashed" ValueProperty="Duration">
+                                <RadzenAreaSeries Title="Minutes" Smooth="true" Data="@timedata" CategoryProperty="Time" LineType="LineType.Dashed" ValueProperty="Duration">
                                 </RadzenAreaSeries>
                                 <RadzenLegend Visible="false" />
                                 <RadzenCategoryAxis Formatter="@FormatAsTime">
@@ -68,10 +150,19 @@
                                     <RadzenAxisTitle Text="Duration (minutes)" />
                                 </RadzenValueAxis>
                             </RadzenChart>
-                        </div>
-                        <div class="col-12 col-xl-4 my-5">
+                        }
+                    </div>
+                    <div class="col-12 col-xl-4 my-4 px-1">
+                        @if (viewdata == null)
+                        {
+                            <RadzenCard class="center">
+                                <div class="lds-ellipsis d-flex"><div></div><div></div><div></div><div></div></div>
+                            </RadzenCard>
+                        }
+                        else
+                        {
                             <RadzenChart>
-                                <RadzenDonutSeries Data="@viewdata" CategoryProperty="View" ValueProperty="Duration">
+                                <RadzenDonutSeries Title="Minutes" Data="@viewdata" CategoryProperty="View" ValueProperty="Duration">
                                     <TitleTemplate>
                                         <div class="rz-donut-content">
                                             <div>Top 8</div> 
@@ -83,16 +174,41 @@
                                     <RadzenAxisTitle Text="Duration (minutes)" />
                                 </RadzenValueAxis>
                             </RadzenChart>
-                        </div>
+                        }
                     </div>
-                }
+                </div>
+                <div class="col-12 my-4 px-1">
+                    @if(daydata == null)
+                    {
+                        <RadzenCard class="center">
+                            <div class="lds-ellipsis d-flex"><div></div><div></div><div></div><div></div></div>
+                        </RadzenCard>
+                    }
+                    else
+                    {
+                        <RadzenChart>
+                            <RadzenColumnSeries Title="Hours" Data="@daydata" CategoryProperty="Day" ValueProperty="DurationDay" Fills=@barhighlight/>
+                            <RadzenLegend Visible="false" />
+                            <RadzenColumnOptions Radius="5" />
+                            <RadzenCategoryAxis Padding="20" >
+                                <RadzenAxisTitle Text="Date" />
+                            </RadzenCategoryAxis>
+                            <RadzenValueAxis Formatter="@FormatAsHour">
+                                <RadzenGridLines Visible="true" />
+                                <RadzenAxisTitle Text="Duration (hours)" />
+                            </RadzenValueAxis>
+                        </RadzenChart>
+                    }
+                </div>
             </div>
         </div>
     </div>
 @code {
-    double totalhour = 0;
+    double dailyhour = 0;
+    double weeklyhour = 0;
+    string[] barhighlight = new[] { "#0A8AE6", "#0A8AE6", "#0A8AE6", "#0A8AE6", "#0A8AE6", "#0A8AE6", "#0A8AE6" };
 
-    public class Foo
+    public class RawData
     {
         public string Start { get; set; }
         public string End { get; set; }
@@ -105,7 +221,7 @@
         public string Type { get; set; }
     }
 
-    public class Pro
+    public class TimeData
     {
         public string Time{ get; set; }
         public double Duration{ get; set; }
@@ -117,15 +233,29 @@
         public double Duration{ get; set; }
     }
 
-    private Foo[]? rawdata;
-    private Pro[]? data;
+    public class DayData
+    {
+        public string Day { get; set; }
+        public double DurationDay { get; set; }
+    }
+
+    public class WeekList
+    {
+        public DateTime StartWeek{ get; set; }
+        public List<DateTime> WeekDates { get; set; }
+    }
+
+    private RawData[]? rawdata;
+    private TimeData[]? timedata;
     private Views[]? viewdata;
+    private DayData[]? daydata;
+    private List<WeekList> weekList = new();
     private List<DateTime> datelist = new();
     private string format = "d/MM/yyyy H:mm";
 
     protected override async Task OnInitializedAsync()
     {
-        rawdata = await Http.GetFromJsonAsync<Foo[]>("sample-data/hourlog.json");
+        rawdata = await Http.GetFromJsonAsync<RawData[]>("sample-data/hourlog.json");
 
         //Sets up Date Range
         foreach(var raw in rawdata)
@@ -137,12 +267,18 @@
                 datelist.Add(rawDate);
         }
 
-        RenderGraph(datelist.Last());
-        RenderDonut(datelist.Last());
+        Task<TimeData[]?> areatask = RenderGraph(datelist.Last());
+        Task<Views[]?> donuttask = RenderDonut(datelist.Last());
+        Task<DayData[]?> bartask = RenderBar(datelist.Last());
+
+        timedata = await areatask;
+        viewdata = await donuttask;
+        daydata = await bartask;
     }
 
-    private void RenderGraph(DateTime? selectedTime)
+    private async Task<TimeData[]?> RenderGraph(DateTime? selectedTime)
     {
+        await Task.Delay(100); // Unblocks UI render
         var filteredlist = rawdata.Where(x => DateTime.ParseExact(x.Start, format, CultureInfo.InvariantCulture).Date == selectedTime);
         //Get 1st element to determine x-axis start
         var filteredstart = DateTime.ParseExact(filteredlist.First().Start, format, CultureInfo.InvariantCulture);
@@ -152,12 +288,13 @@
         var axisEnd = Extensions.RoundUpToNearest30(filteredend);
 
         //Sets up Data List with the correct x-axis
-        var datalist = new List<Pro>();
+        var datalist = new List<TimeData>();
         for(DateTime i = axisStart; i < axisEnd; i = i.AddMinutes(30))
         {
-            datalist.Add(new Pro { Time = i.ToString("d/MM/yyyy H:mm"), Duration = 0 });
+            datalist.Add(new TimeData { Time = i.ToString("d/MM/yyyy H:mm"), Duration = 0 });
         }
 
+        await Task.Delay(100); // Unblocks UI render
         foreach(var x in datalist)
         {
             var xTime = DateTime.ParseExact(x.Time, format, CultureInfo.InvariantCulture);
@@ -202,18 +339,20 @@
                 }
             }
 
-            totalhour += x.Duration/3600;
+            dailyhour += x.Duration/3600;
         }
 
-        data = datalist.ToArray();
+        return datalist.ToArray();
     }
 
-    private void RenderDonut(DateTime? selectedTime)
+    private async Task<Views[]?> RenderDonut(DateTime? selectedTime)
     {
+        await Task.Delay(100); // Unblocks UI render
         var filteredlist = rawdata.Where(x => DateTime.ParseExact(x.Start, format, CultureInfo.InvariantCulture).Date == selectedTime);
         List<Views> viewdatas = new();
         List<string> viewlist = new();
 
+        await Task.Delay(100); // Unblocks UI render
         foreach(var data in filteredlist)
         {
             if (viewlist.Contains(data.View))
@@ -222,6 +361,7 @@
                 viewlist.Add(data.View);
         }
 
+        await Task.Delay(100); // Unblocks UI render
         foreach(var view in viewlist)
         {
             var viewdurations = filteredlist.Where(v => v.View == view);
@@ -232,12 +372,74 @@
             viewdatas.Add(new() { View = view, Duration = viewduration });
         }
 
-        viewdata = viewdatas.OrderByDescending(d => d.Duration).Take(8).ToArray();
+        return viewdatas.OrderByDescending(d => d.Duration).Take(8).ToArray();
+    }
+
+    private async Task<DayData[]?> RenderBar(DateTime? selectedDate)
+    {
+        await Task.Delay(100); // Unblocks UI render
+        //Get 1st element to determine start
+        var start = DateTime.ParseExact(rawdata.First().Start, format, CultureInfo.InvariantCulture);
+        var startweek = Extensions.FirstDayOfWeek(start).Date;
+        //Get last element to determine end
+        var end = DateTime.ParseExact(rawdata.Last().End, format, CultureInfo.InvariantCulture);
+        var endweek = Extensions.FirstDayOfWeek(end).Date;
+
+        //Determine number of weeks
+        int weeknum = endweek.Subtract(startweek).Days/7 + 1;
+
+        //Sets up Week Range
+        for(int w = 0; w < weeknum; w++)
+        {
+            var currentstartweek = startweek.AddDays(7*w);
+            List<DateTime> oneweek = new();
+            for(int i = 0; i < 7; i++)
+                oneweek.Add(currentstartweek.AddDays(i));
+
+            weekList.Add(new(){StartWeek = currentstartweek,WeekDates = oneweek});
+        }
+
+        // Sets bar chart highlight
+        barhighlight = new[] { "#0A8AE6", "#0A8AE6", "#0A8AE6", "#0A8AE6", "#0A8AE6", "#0A8AE6", "#0A8AE6" };
+        int dayint = (int)selectedDate.Value.DayOfWeek;
+        barhighlight[dayint] = "#F40042";
+
+        startweek = Extensions.FirstDayOfWeek(selectedDate.Value).Date;
+        var selectedWeek = weekList.Find(d => d.StartWeek == startweek);
+        List<DayData> datalist = new();
+        foreach(var date in selectedWeek.WeekDates)
+        {
+            try
+            {
+                var filteredlist = rawdata.Where(x => DateTime.ParseExact(x.Start, format, CultureInfo.InvariantCulture).Date == date);
+
+                double durationinday = 0;
+                await Task.Delay(100); // Unblocks UI render
+                foreach(var time in filteredlist)
+                    durationinday += time.Duration;
+
+                weeklyhour += durationinday/3600;
+
+                datalist.Add(new() { Day = date.ToString("d/MM"), DurationDay = durationinday });
+
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("There's no data on this date within the selected week: " + ex.Message);
+            }
+
+        }
+        return datalist.ToArray();
     }
 
     string FormatAsMinute(object value)
     {
         return ((double)value/60).ToString("#.##");
+    }
+
+    string FormatAsHour(object value)
+    {
+        return ((double)value/3600).ToString("#.##");
     }
 
     string FormatAsTime(object value)
@@ -257,14 +459,22 @@
         args.Disabled = args.Disabled || !datelist.Contains(args.Date);
     }
 
-    void OnChange(DateTime? value, string name, string format)
+    async Task OnChange(DateTime? value, string name, string format)
     {
         Console.WriteLine($"{name} value changed to {value?.ToString(format)}");
         try
         {
-            totalhour = 0;
-            RenderGraph(value?.Date);
-            RenderDonut(value?.Date);
+            // Display loaders
+            timedata = null;
+            viewdata = null;
+            daydata = null;
+            // Reset hours
+            dailyhour = 0;
+            weeklyhour = 0;
+            // Replot graphs
+            timedata = await RenderGraph(value?.Date);
+            viewdata = await RenderDonut(value?.Date);
+            daydata = await RenderBar(value?.Date);
         }
         catch(Exception ex)
         {
