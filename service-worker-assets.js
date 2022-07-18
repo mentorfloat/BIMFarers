@@ -105,11 +105,11 @@
       "url": "_framework\/icudt.dat"
     },
     {
-      "hash": "sha256-F7CBdyIlb8DIFPB\/CdJeWJGniWiOinQ9v39tQ2iHdOE=",
+      "hash": "sha256-KywgFhyXx6b9G6xPFW1f0tkJyQSjtSkbTKYtbs3dE2c=",
       "url": "_framework\/blazor.boot.json"
     },
     {
-      "hash": "sha256-5UxZ2n2Mu07cTRKrdvGWqeTXtxnZnOGHQI996uJPQbA=",
+      "hash": "sha256-VP7U2IUAdj9nXfqr+ZRSELZfT0crLzxiYC78TBhGyCg=",
       "url": "_framework\/BIMFarersApp.dll"
     },
     {
@@ -449,5 +449,5 @@
       "url": "_content\/Radzen.Blazor\/Radzen.Blazor.js"
     }
   ],
-  "version": "c6GnhSRz"
+  "version": "7JSeNF5n"
 };
