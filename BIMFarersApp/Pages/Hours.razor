@@ -3,94 +3,44 @@
 @inject HttpClient Http
 
 <style>
-    .center {
-      width: 100%;
-      height: 300px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-    .lds-ellipsis {
-      position: relative;
-      width: 76px;
-      height: 80px;
-      justify-content: center;
-    }
-    .lds-ellipsis div {
-      position: absolute;
-      top: 33px;
-      width: 13px;
-      height: 13px;
-      border-radius: 50%;
-      background: #F40042;
-      animation-timing-function: cubic-bezier(0, 1, 1, 0);
-    }
-    .lds-ellipsis div:nth-child(1) {
-      left: 8px;
-      animation: lds-ellipsis1 0.6s infinite;
-    }
-    .lds-ellipsis div:nth-child(2) {
-      left: 8px;
-      animation: lds-ellipsis2 0.6s infinite;
-    }
-    .lds-ellipsis div:nth-child(3) {
-      left: 32px;
-      animation: lds-ellipsis2 0.6s infinite;
-    }
-    .lds-ellipsis div:nth-child(4) {
-      left: 56px;
-      animation: lds-ellipsis3 0.6s infinite;
-    }
-    @@keyframes lds-ellipsis1 {
-      0% {
-        transform: scale(0);
-      }
-      100% {
-        transform: scale(1);
-      }
-    }
-    @@keyframes lds-ellipsis3 {
-      0% {
-        transform: scale(1);
-      }
-      100% {
-        transform: scale(0);
-      }
-    }
-    @@keyframes lds-ellipsis2 {
-      0% {
-        transform: translate(0, 0);
-      }
-      100% {
-        transform: translate(24px, 0);
-      }
+    .rz-axis .rz-axis-title {
+        font-size: smaller;
     }
 
     .rz-legend-item-text {
         font-size: small;
     }
+
     .rz-donut-content {
         font-size: small;
     }
+
     .rz-category-axis .rz-tick-text {
         font-size: small;
     }
+
+    @@media only screen and (max-width: 750px) {
+        .rz-donut-content {
+            visibility: hidden;
+        }
+    }
+
     @@media only screen and (max-width: 1100px) {
         .rz-category-axis .rz-tick-text {
             visibility: hidden;
         }
     }
-    @@media only screen and (min-width: 1200px) and (max-width: 1400px) {
-        .rz-category-axis .rz-tick-text {
-            visibility: hidden;
-        }
-    }
-    @@media only screen and (max-width: 1500px) {
+
+    @@media only screen and (min-width: 1400px) and (max-width: 1500px) {
         .rz-category-axis .rz-tick-text {
             font-size: 0.7vw;
         }
+
+        .rz-donut-content {
+            font-size: 0.6vw;
+        }
     }
+
     @@media only screen and (max-width: 1650px) {
         .rz-category-axis .rz-tick-text {
             font-size: 0.8vw;
@@ -99,23 +49,23 @@
 
     .rz-column-series.rz-series-0 {
         transform-origin: 0 68%;
-
         animation-duration: 1s;
         animation-delay: 0s;
         animation-name: slideUpBars;
-
         -webkit-animation-timing-function: ease-in-out; /* Safari and Chrome */
-        -moz-animation-timing-function: ease-in-out; /* Safari and Chrome */    
+        -moz-animation-timing-function: ease-in-out; /* Safari and Chrome */
         -o-animation-timing-function: ease-in-out; /* Safari and Chrome */
         animation-timing-function: ease-in-out;
     }
+
     @@keyframes slideUpBars {
-      0% {
-        transform: scaleY(0);
-      }
-      100% {
-        transform: scaleY(1);
-      }
+        0% {
+            transform: scaleY(0);
+        }
+
+        100% {
+            transform: scaleY(1);
+        }
     }
 </style>
 
@@ -126,87 +76,95 @@
                 <RadzenCard Class="w-100 mb-4" >
                     <RadzenLabel Text="@("Daily Revit Hours: " + dailyhour.ToString("#.##"))" Style="margin-left: 8px; vertical-align: middle;" />
                     <RadzenLabel Text="@("Weekly Revit Hours: " + weeklyhour.ToString("#.##"))" Style="margin-left: 8px; vertical-align: middle;" />
-                    <RadzenDatePicker TValue="DateTime?" DateFormat="MMM dd" DateRender=@DateRender Change=@(args => OnChange(args, "DatePicker with disabled dates", "MM/dd/yyyy")) Class="w-100" />
+                    <RadzenDatePicker @bind-Value=@selectedDate TValue="DateTime?" DateFormat="MMM dd" DateRender=@DateRender Change=@(args => OnChange(args, "DatePicker with disabled dates", "MM/dd/yyyy")) Class="w-100" />
                 </RadzenCard>
-                <div class="d-flex flex-column flex-xl-row">
-                    <div class="col-12 col-xl-8 my-4 px-1">
+                <div class="d-flex flex-column flex-xxl-row">
+                    <div class="col-12 col-xxl-8 my-4" style="padding-right: 0.5rem;">
                         @if (timedata == null)
                         {
-                            <RadzenCard class="center">
+                            <div class="p-3 center" style="box-shadow: rgb(0 0 0 / 6%) 0px 6px 14px 0px;">
                                 <div class="lds-ellipsis d-flex"><div></div><div></div><div></div><div></div></div>
-                            </RadzenCard>
+                            </div>
                         }
                         else
                         {
-                            <RadzenChart>
-                                <RadzenAreaSeries Title="Minutes" Smooth="true" Data="@timedata" CategoryProperty="Time" LineType="LineType.Dashed" ValueProperty="Duration">
-                                </RadzenAreaSeries>
-                                <RadzenLegend Visible="false" />
-                                <RadzenCategoryAxis Formatter="@FormatAsTime">
-                                    <RadzenAxisTitle Text="Time (HH:mm)" />
-                                </RadzenCategoryAxis>
-                                <RadzenValueAxis Formatter="@FormatAsMinute">
-                                    <RadzenGridLines Visible="true" />
-                                    <RadzenAxisTitle Text="Duration (minutes)" />
-                                </RadzenValueAxis>
-                            </RadzenChart>
+                            <div class="p-3" style="box-shadow: rgb(0 0 0 / 6%) 0px 6px 14px 0px;">
+                                <RadzenChart>
+                                    <RadzenAreaSeries Title="Minutes" Smooth="true" Data="@timedata" CategoryProperty="Time" LineType="LineType.Dashed" ValueProperty="Duration" Fill="#e6ecef" Stroke="#0479cc">
+                                    </RadzenAreaSeries>
+                                    <RadzenLegend Visible="false" />
+                                    <RadzenCategoryAxis Formatter="@FormatAsTime">
+                                        <RadzenAxisTitle Text="Time (GMT+8)" />
+                                    </RadzenCategoryAxis>
+                                    <RadzenValueAxis Formatter="@FormatAsMinute">
+                                        <RadzenGridLines Visible="true" />
+                                        <RadzenAxisTitle Text="Duration (minutes)" />
+                                    </RadzenValueAxis>
+                                </RadzenChart>
+                            </div>
                         }
                     </div>
-                    <div class="col-12 col-xl-4 my-4 px-1">
+                    <div class="col-12 col-xxl-4 my-4" style="padding-left: 0.5rem;">
                         @if (viewdata == null)
                         {
-                            <RadzenCard class="center">
+                            <div class="p-3 center" style="box-shadow: rgb(0 0 0 / 6%) 0px 6px 14px 0px;">
                                 <div class="lds-ellipsis d-flex"><div></div><div></div><div></div><div></div></div>
-                            </RadzenCard>
+                            </div>
                         }
                         else
                         {
-                            <RadzenChart>
-                                <RadzenDonutSeries Title="Minutes" Data="@viewdata" CategoryProperty="View" ValueProperty="Duration">
-                                    <TitleTemplate>
-                                        <div class="rz-donut-content">
-                                            <div>Top 8</div> 
-                                            <div>Active Views</div>
-                                        </div>
-                                    </TitleTemplate>
-                                </RadzenDonutSeries>
-                                <RadzenValueAxis Formatter="@FormatAsMinute">
-                                    <RadzenAxisTitle Text="Duration (minutes)" />
-                                </RadzenValueAxis>
-                            </RadzenChart>
+                            <div class="p-3" style="box-shadow: rgb(0 0 0 / 6%) 0px 6px 14px 0px;">
+                                <RadzenChart>
+                                    <RadzenDonutSeries Title="Minutes" Data="@viewdata" CategoryProperty="View" ValueProperty="Duration" Fills=@donutcolors>
+                                        <TitleTemplate>
+                                            <div class="rz-donut-content">
+                                                <div>Top 8</div> 
+                                                <div>Active Views</div>
+                                            </div>
+                                        </TitleTemplate>
+                                    </RadzenDonutSeries>
+                                    <RadzenValueAxis Formatter="@FormatAsMinute">
+                                        <RadzenAxisTitle Text="Duration (minutes)" />
+                                    </RadzenValueAxis>
+                                </RadzenChart>
+                            </div>
                         }
                     </div>
                 </div>
-                <div class="col-12 my-4 px-1">
+                <div class="col-12 my-4">
                     @if(daydata == null)
                     {
-                        <RadzenCard class="center">
+                        <div class="p-3 center" style="box-shadow: rgb(0 0 0 / 6%) 0px 6px 14px 0px;">
                             <div class="lds-ellipsis d-flex"><div></div><div></div><div></div><div></div></div>
-                        </RadzenCard>
+                        </div>
                     }
                     else
                     {
-                        <RadzenChart>
-                            <RadzenColumnSeries Title="Hours" Data="@daydata" CategoryProperty="Day" ValueProperty="DurationDay" Fills=@barhighlight/>
-                            <RadzenLegend Visible="false" />
-                            <RadzenColumnOptions Radius="5" />
-                            <RadzenCategoryAxis Padding="20" >
-                                <RadzenAxisTitle Text="Date" />
-                            </RadzenCategoryAxis>
-                            <RadzenValueAxis Formatter="@FormatAsHour">
-                                <RadzenGridLines Visible="true" />
-                                <RadzenAxisTitle Text="Duration (hours)" />
-                            </RadzenValueAxis>
-                        </RadzenChart>
+                        <div class="p-3" style="box-shadow: rgb(0 0 0 / 6%) 0px 6px 14px 0px;">
+                            <RadzenChart>
+                                <RadzenColumnSeries Title="Hours" Data="@daydata" CategoryProperty="Day" ValueProperty="DurationDay" Fills=@barhighlight/>
+                                <RadzenLegend Visible="false" />
+                                <RadzenColumnOptions Radius="5" />
+                                <RadzenCategoryAxis Padding="20" >
+                                    <RadzenAxisTitle Text="Date" />
+                                </RadzenCategoryAxis>
+                                <RadzenValueAxis Formatter="@FormatAsHour">
+                                    <RadzenGridLines Visible="true" />
+                                    <RadzenAxisTitle Text="Duration (hours)" />
+                                </RadzenValueAxis>
+                            </RadzenChart>
+                        </div>
                     }
                 </div>
             </div>
         </div>
     </div>
 @code {
+    DateTime? selectedDate;
     double dailyhour = 0;
     double weeklyhour = 0;
-    string[] barhighlight = new[] { "#0A8AE6", "#0A8AE6", "#0A8AE6", "#0A8AE6", "#0A8AE6", "#0A8AE6", "#0A8AE6" };
+    string[] barhighlight;
+    string[] donutcolors = new[] { "#F40042", "#0A8AE6", "#FDCB8E", "#479cc8", "#5b7081", "#69737b", "#a0a4a6", "#f0f0f0" };
 
     public class RawData
     {
@@ -267,9 +225,11 @@
                 datelist.Add(rawDate);
         }
 
-        Task<TimeData[]?> areatask = RenderGraph(datelist.Last());
-        Task<Views[]?> donuttask = RenderDonut(datelist.Last());
-        Task<DayData[]?> bartask = RenderBar(datelist.Last());
+        selectedDate = datelist.Last();
+
+        Task<TimeData[]?> areatask = RenderGraph(selectedDate);
+        Task<Views[]?> donuttask = RenderDonut(selectedDate);
+        Task<DayData[]?> bartask = RenderBar(selectedDate);
 
         timedata = await areatask;
         viewdata = await donuttask;
@@ -400,7 +360,7 @@
         }
 
         // Sets bar chart highlight
-        barhighlight = new[] { "#0A8AE6", "#0A8AE6", "#0A8AE6", "#0A8AE6", "#0A8AE6", "#0A8AE6", "#0A8AE6" };
+        barhighlight = new[] { "#0479cc", "#0479cc", "#0479cc", "#0479cc", "#0479cc", "#0479cc", "#0479cc" };
         int dayint = (int)selectedDate.Value.DayOfWeek;
         barhighlight[dayint] = "#F40042";
 

@@ -3,13 +3,17 @@
 }
 
 .top-row {
-    height: 3.5rem;
-    background-color: rgba(0,0,0,0.4);
+    background-color: #e6ecef;
+    box-shadow: #0d1e29bf 0px -50px 36px -28px inset;
 }
 
 .navbar-brand {
     font-size: 1.1rem;
 }
+    .navbar-brand img {
+        width: 100%;
+        height: 80px;
+    }
 
 .oi {
     width: 2rem;
@@ -58,5 +62,14 @@
     .collapse {
         /* Never collapse the sidebar for wide screens */
         display: block;
+    }
+
+    .navbar-brand img {
+        height: unset;
+    }
+
+    .top-row {
+        border-bottom-left-radius: 25px;
+        box-shadow: rgba(0, 0, 0, 0.35) 0px -50px 36px -28px inset;
     }
 }

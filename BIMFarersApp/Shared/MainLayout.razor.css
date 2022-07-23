@@ -9,7 +9,9 @@ main {
 }
 
 .sidebar {
-    background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
+    background-color: #57646d;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
 }
 
 .top-row {
@@ -60,6 +62,12 @@ main {
         height: 100vh;
         position: sticky;
         top: 0;
+        background-image: url(media/appdrwbg.png),linear-gradient(180deg, #00121e 5%, #ebf0f263 80%);
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-position-y: bottom;
+        border-bottom-left-radius: unset;
+        border-bottom-right-radius: unset;
     }
 
     .top-row {
