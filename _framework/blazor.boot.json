@@ -7,7 +7,7 @@
   "linkerEnabled": true,
   "resources": {
     "assembly": {
-      "BIMFarersApp.dll": "sha256-r\/p4kowbO9bwYuN5OJneQrsX944jy\/lNCYX0981HyNk=",
+      "BIMFarersApp.dll": "sha256-KRT5Wc0c89XeNcDgFI6PWO52QH7O1sYyOFGtI8qVRgo=",
       "Microsoft.AspNetCore.Components.dll": "sha256-lnLOgxX+v1S3YBGbQ6qIM5kt5ULJ8HUIRMzrCY\/8tuQ=",
       "Microsoft.AspNetCore.Components.Forms.dll": "sha256-Wxcnt3kjMAHgE0eSb2DOH\/Epb8KT0AUlM89y+57vf2I=",
       "Microsoft.AspNetCore.Components.Web.dll": "sha256-UHEnTrzyokn2qwMdx7MudqndGrTmXy7aD35ilo14gIY=",

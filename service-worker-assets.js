@@ -77,6 +77,10 @@
       "url": "media\/logo.png"
     },
     {
+      "hash": "sha256-q1637HtWoK+nUrX5CrXcAE\/dSsihTngp8rs1Fp9uw04=",
+      "url": "media\/logosmall.png"
+    },
+    {
       "hash": "sha256-cdqypMhrUkYZ+F5T4bAAjnMz+\/q+YVznkpxhjk2Rtco=",
       "url": "sample-data\/hourlog.json"
     },
@@ -113,11 +117,11 @@
       "url": "_framework\/icudt.dat"
     },
     {
-      "hash": "sha256-1O5ZKdi07OwKm4sGGGdxQZNWNhhgN3n\/PzkgUPk9KFo=",
+      "hash": "sha256-KNbm5biAdIKgfkyxlAjbOR7pSVT8GJBTaFUZ1lc0tkw=",
       "url": "_framework\/blazor.boot.json"
     },
     {
-      "hash": "sha256-r\/p4kowbO9bwYuN5OJneQrsX944jy\/lNCYX0981HyNk=",
+      "hash": "sha256-KRT5Wc0c89XeNcDgFI6PWO52QH7O1sYyOFGtI8qVRgo=",
       "url": "_framework\/BIMFarersApp.dll"
     },
     {
@@ -345,7 +349,7 @@
       "url": "_framework\/System.Xml.XDocument.dll"
     },
     {
-      "hash": "sha256-hpPTM+67G2925Q5OJT7bf5\/GpEceQzbpAvx6hEf3c8w=",
+      "hash": "sha256-oMydD3GWWWY\/lrQxpqMZVLQBJUXMoPOs\/+q14HTCVfc=",
       "url": "BIMFarersApp.styles.css"
     },
     {
@@ -457,5 +461,5 @@
       "url": "_content\/Radzen.Blazor\/Radzen.Blazor.js"
     }
   ],
-  "version": "xFECRj6N"
+  "version": "U0yNS69A"
 };
