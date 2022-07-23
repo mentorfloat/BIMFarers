@@ -9,9 +9,8 @@ main {
 }
 
 .sidebar {
-    background-color: #57646d;
-    border-bottom-left-radius: 20px;
-    border-bottom-right-radius: 20px;
+    background-color: #00121e;
+    height: 120px;
 }
 
 .top-row {
@@ -68,6 +67,7 @@ main {
         background-position-y: bottom;
         border-bottom-left-radius: unset;
         border-bottom-right-radius: unset;
+        background-color: unset;
     }
 
     .top-row {

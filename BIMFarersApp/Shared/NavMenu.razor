@@ -1,13 +1,29 @@
 ﻿<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href=""><img src="media/logo.png" alt=""></a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
     </div>
 </div>
 
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+<div class="small-logo">
+    <a href=""><img class="navbar-small" src="media/logosmall.png" alt=""></a>
+</div>
+
+<nav role="navigation">
+    <div id="menuToggle">
+        <!--Hidden checkbox is used as click reciever to use the :checked selector on it.-->
+        <input type="checkbox" checked="@showNavMenu" @onclick="ToggleNavMenu"/>
+        <!--Spans to act as a hamburger.-->
+        <span></span>
+        <span></span>
+        <span></span>
+        <ul id="menu" @onclick="ToggleNavMenu">
+            <a href=""><li>Home</li></a>
+            <a href="hours"><li>Revit Hours</li></a>
+        </ul>
+    </div>
+</nav>
+
+<div class="collapse">
     <nav class="flex-column">
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
@@ -21,14 +37,11 @@
         </div>
     </nav>
 </div>
-
 @code {
-    private bool collapseNavMenu = true;
-
-    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    private bool showNavMenu = false;
 
     private void ToggleNavMenu()
     {
-        collapseNavMenu = !collapseNavMenu;
+        showNavMenu = !showNavMenu;
     }
 }
