@@ -7,7 +7,7 @@
   "linkerEnabled": true,
   "resources": {
     "assembly": {
-      "BIMFarersApp.dll": "sha256-KRT5Wc0c89XeNcDgFI6PWO52QH7O1sYyOFGtI8qVRgo=",
+      "BIMFarersApp.dll": "sha256-IcVZrT34Nb3V5Sl1u\/\/wrJdYtzx0owfoXuEFOLvNlR0=",
       "Microsoft.AspNetCore.Components.dll": "sha256-lnLOgxX+v1S3YBGbQ6qIM5kt5ULJ8HUIRMzrCY\/8tuQ=",
       "Microsoft.AspNetCore.Components.Forms.dll": "sha256-Wxcnt3kjMAHgE0eSb2DOH\/Epb8KT0AUlM89y+57vf2I=",
       "Microsoft.AspNetCore.Components.Web.dll": "sha256-UHEnTrzyokn2qwMdx7MudqndGrTmXy7aD35ilo14gIY=",
@@ -55,7 +55,7 @@
       "System.Reflection.Emit.ILGeneration.dll": "sha256-OPWhfhgpFitiW5U82DeZZpiiPlKpOnY6p++e0HbLUc0=",
       "System.Reflection.Primitives.dll": "sha256-57hGGCoXsgRzbAREJtt2VCxws080Xn+jeaegDEWsmCE=",
       "System.Runtime.CompilerServices.Unsafe.dll": "sha256-MOTr7Zcm3cYDv7ypZ7mVi8SQ82a15iKQxd7nISZbWWc=",
-      "System.Runtime.dll": "sha256-JrGVU+hY\/bwhVAJCTluikDb3Dy2KeAPOsangTtLcKPY=",
+      "System.Runtime.dll": "sha256-d7VcVe2JU+AiUchgfo7DUkvF\/y\/ir8GFh8n23S7Lnac=",
       "System.Runtime.InteropServices.RuntimeInformation.dll": "sha256-MxaKl38DCcVubc\/mHmmbhqyenJqQ8lyE6HTJZ\/IM1Gc=",
       "System.Text.Encodings.Web.dll": "sha256-HPoxxm9ehM0yzxZnJsIJAq+fO0oMkKTspxynk63EDMI=",
       "System.Text.Json.dll": "sha256-VGbqqp3KdZUqpCFru4JNPcnRdDhGLodMoykK2hCmI3E=",

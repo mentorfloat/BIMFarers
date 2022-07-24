@@ -81,7 +81,7 @@
       "url": "media\/logosmall.png"
     },
     {
-      "hash": "sha256-cdqypMhrUkYZ+F5T4bAAjnMz+\/q+YVznkpxhjk2Rtco=",
+      "hash": "sha256-rvNVCfWWuoUBTOu8OgwAGhc0o6cnUKPPKDKa15APw0k=",
       "url": "sample-data\/hourlog.json"
     },
     {
@@ -117,11 +117,11 @@
       "url": "_framework\/icudt.dat"
     },
     {
-      "hash": "sha256-KNbm5biAdIKgfkyxlAjbOR7pSVT8GJBTaFUZ1lc0tkw=",
+      "hash": "sha256-N+EdBmqRgk0h9vodEXgNGXEwzmMLXFCJGnrAWZIGwps=",
       "url": "_framework\/blazor.boot.json"
     },
     {
-      "hash": "sha256-KRT5Wc0c89XeNcDgFI6PWO52QH7O1sYyOFGtI8qVRgo=",
+      "hash": "sha256-IcVZrT34Nb3V5Sl1u\/\/wrJdYtzx0owfoXuEFOLvNlR0=",
       "url": "_framework\/BIMFarersApp.dll"
     },
     {
@@ -313,7 +313,7 @@
       "url": "_framework\/System.Runtime.CompilerServices.Unsafe.dll"
     },
     {
-      "hash": "sha256-JrGVU+hY\/bwhVAJCTluikDb3Dy2KeAPOsangTtLcKPY=",
+      "hash": "sha256-d7VcVe2JU+AiUchgfo7DUkvF\/y\/ir8GFh8n23S7Lnac=",
       "url": "_framework\/System.Runtime.dll"
     },
     {
@@ -461,5 +461,5 @@
       "url": "_content\/Radzen.Blazor\/Radzen.Blazor.js"
     }
   ],
-  "version": "U0yNS69A"
+  "version": "Jaj539Y2"
 };
