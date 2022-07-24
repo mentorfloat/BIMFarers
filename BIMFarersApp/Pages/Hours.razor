@@ -25,25 +25,21 @@
         }
     }
 
-    @@media only screen and (max-width: 1100px) {
+    @@media only screen and (max-width: 1000px) {
         .rz-category-axis .rz-tick-text {
             visibility: hidden;
         }
     }
 
-    @@media only screen and (min-width: 1400px) and (max-width: 1500px) {
+    @@media only screen and (max-width: 1200px) {
         .rz-category-axis .rz-tick-text {
-            font-size: 0.7vw;
-        }
-
-        .rz-donut-content {
-            font-size: 0.6vw;
+            font-size: 0.9vw;
         }
     }
 
-    @@media only screen and (max-width: 1650px) {
-        .rz-category-axis .rz-tick-text {
-            font-size: 0.8vw;
+    @@media only screen and (min-width: 1400px) and (max-width: 1500px) {
+        .rz-donut-content {
+            font-size: 0.6vw;
         }
     }
 
@@ -74,9 +70,22 @@
         <div class="row">
             <div class="col">
                 <RadzenCard Class="w-100 mb-4" >
+                @if(selectedUser == null)
+                {
+                    <div class="p-3 center" style="height: 160px;">
+                        <div class="lds-ellipsis d-flex"><div></div><div></div><div></div><div></div></div>
+                    </div>
+                }
+                else
+                {
+                    <RadzenDropDown TValue="string"
+                        Placeholder=@selectedUser.name
+                        Data=@(Users.Select(u => u.name))
+                        Change=@(args => OnUserSelected(args, "DropDown")) />
                     <RadzenLabel Text="@("Daily Revit Hours: " + dailyhour.ToString("#.##"))" Style="margin-left: 8px; vertical-align: middle;" />
                     <RadzenLabel Text="@("Weekly Revit Hours: " + weeklyhour.ToString("#.##"))" Style="margin-left: 8px; vertical-align: middle;" />
                     <RadzenDatePicker @bind-Value=@selectedDate TValue="DateTime?" DateFormat="MMM dd" DateRender=@DateRender Change=@(args => OnChange(args, "DatePicker with disabled dates", "MM/dd/yyyy")) Class="w-100" />
+                }
                 </RadzenCard>
                 <div class="d-flex flex-column flex-xxl-row">
                     <div class="col-12 col-xxl-8 my-4" style="padding-right: 0.5rem;">
@@ -161,6 +170,7 @@
     </div>
 @code {
     DateTime? selectedDate;
+    User? selectedUser;
     double dailyhour = 0;
     double weeklyhour = 0;
     string[] barhighlight;
@@ -177,6 +187,12 @@
         public double UID { get; set; }
         public string View { get; set; }
         public string Type { get; set; }
+    }
+
+    public class User
+    {
+        public string name { get; set; }
+        public List<DateTime> dateList { get; set; }
     }
 
     public class TimeData
@@ -203,11 +219,11 @@
         public List<DateTime> WeekDates { get; set; }
     }
 
+    private List<User> Users = new();
     private RawData[]? rawdata;
     private TimeData[]? timedata;
     private Views[]? viewdata;
     private DayData[]? daydata;
-    private List<WeekList> weekList = new();
     private List<DateTime> datelist = new();
     private string format = "d/MM/yyyy H:mm";
 
@@ -215,31 +231,41 @@
     {
         rawdata = await Http.GetFromJsonAsync<RawData[]>("sample-data/hourlog.json");
 
-        //Sets up Date Range
-        foreach(var raw in rawdata)
+        var distinctUsers = rawdata.Select(u => u.User).Distinct();
+
+        foreach(var u in distinctUsers)
         {
-            var rawDate = DateTime.ParseExact(raw.Start, format, CultureInfo.InvariantCulture).Date;
-            if (datelist.Contains(rawDate))
-                continue;
-            else
-                datelist.Add(rawDate);
+            //Create new User
+            User newUser = new();
+            newUser.name = u;
+            newUser.dateList = new();
+
+            //Sets up Date Range for User
+            foreach(var raw in rawdata.Where(s => s.User == u))
+            {
+                var rawDate = DateTime.ParseExact(raw.Start, format, CultureInfo.InvariantCulture).Date;
+                if (newUser.dateList.Contains(rawDate))
+                    continue;
+                else
+                    newUser.dateList.Add(rawDate);
+            }
+
+            Users.Add(newUser);
         }
 
-        selectedDate = datelist.Last();
-
-        Task<TimeData[]?> areatask = RenderGraph(selectedDate);
-        Task<Views[]?> donuttask = RenderDonut(selectedDate);
-        Task<DayData[]?> bartask = RenderBar(selectedDate);
-
-        timedata = await areatask;
-        viewdata = await donuttask;
-        daydata = await bartask;
+        // Initial plot/display
+        selectedUser = Users.Last();
+        selectedDate = selectedUser.dateList.Last();
+        timedata = await RenderGraph(selectedDate, selectedUser.name);
+        viewdata = await RenderDonut(selectedDate, selectedUser.name);
+        daydata = await RenderBar(selectedDate, selectedUser.name);
     }
 
-    private async Task<TimeData[]?> RenderGraph(DateTime? selectedTime)
+    private async Task<TimeData[]?> RenderGraph(DateTime? selectedTime, string selectedUser)
     {
-        await Task.Delay(100); // Unblocks UI render
-        var filteredlist = rawdata.Where(x => DateTime.ParseExact(x.Start, format, CultureInfo.InvariantCulture).Date == selectedTime);
+        await Task.Delay(200); // Unblocks UI render
+        var filteredlist = rawdata.Where(x => DateTime.ParseExact(x.Start, format, CultureInfo.InvariantCulture).Date == selectedTime)
+                                    .Where(x => x.User == selectedUser);
         //Get 1st element to determine x-axis start
         var filteredstart = DateTime.ParseExact(filteredlist.First().Start, format, CultureInfo.InvariantCulture);
         var axisStart = Extensions.RoundDownToNearest30(filteredstart);
@@ -305,10 +331,11 @@
         return datalist.ToArray();
     }
 
-    private async Task<Views[]?> RenderDonut(DateTime? selectedTime)
+    private async Task<Views[]?> RenderDonut(DateTime? selectedTime, string selectedUser)
     {
         await Task.Delay(100); // Unblocks UI render
-        var filteredlist = rawdata.Where(x => DateTime.ParseExact(x.Start, format, CultureInfo.InvariantCulture).Date == selectedTime);
+        var filteredlist = rawdata.Where(x => DateTime.ParseExact(x.Start, format, CultureInfo.InvariantCulture).Date == selectedTime)
+                                    .Where(x => x.User == selectedUser);
         List<Views> viewdatas = new();
         List<string> viewlist = new();
 
@@ -335,19 +362,20 @@
         return viewdatas.OrderByDescending(d => d.Duration).Take(8).ToArray();
     }
 
-    private async Task<DayData[]?> RenderBar(DateTime? selectedDate)
+    private async Task<DayData[]?> RenderBar(DateTime? selectedDate, string selectedUser)
     {
         await Task.Delay(100); // Unblocks UI render
-        //Get 1st element to determine start
-        var start = DateTime.ParseExact(rawdata.First().Start, format, CultureInfo.InvariantCulture);
+                               //Get 1st element to determine start
+        var start = DateTime.ParseExact(rawdata.Where(x => x.User == selectedUser).First().Start, format, CultureInfo.InvariantCulture);
         var startweek = Extensions.FirstDayOfWeek(start).Date;
         //Get last element to determine end
-        var end = DateTime.ParseExact(rawdata.Last().End, format, CultureInfo.InvariantCulture);
+        var end = DateTime.ParseExact(rawdata.Where(x => x.User == selectedUser).Last().End, format, CultureInfo.InvariantCulture);
         var endweek = Extensions.FirstDayOfWeek(end).Date;
 
         //Determine number of weeks
         int weeknum = endweek.Subtract(startweek).Days/7 + 1;
 
+        List<WeekList> weekList = new();
         //Sets up Week Range
         for(int w = 0; w < weeknum; w++)
         {
@@ -371,7 +399,8 @@
         {
             try
             {
-                var filteredlist = rawdata.Where(x => DateTime.ParseExact(x.Start, format, CultureInfo.InvariantCulture).Date == date);
+                var filteredlist = rawdata.Where(x => DateTime.ParseExact(x.Start, format, CultureInfo.InvariantCulture).Date == date)
+                                            .Where(x => x.User == selectedUser);
 
                 double durationinday = 0;
                 await Task.Delay(100); // Unblocks UI render
@@ -407,8 +436,15 @@
         if (value != null)
         {
             DateTimeFormatInfo auDtfi = new CultureInfo("en-AU", false).DateTimeFormat;
-            string result = Convert.ToDateTime(value, auDtfi).ToString("HH:mm");
-            return result;
+            var dT = Convert.ToDateTime(value, auDtfi);
+
+            if (dT.Minute == 30)
+                return string.Empty;
+            else
+            {
+                string result = dT.ToString("h tt");
+                return result;
+            }
         }
 
         return string.Empty;
@@ -416,7 +452,7 @@
 
     void DateRender(DateRenderEventArgs args)
     {
-        args.Disabled = args.Disabled || !datelist.Contains(args.Date);
+        args.Disabled = args.Disabled || !selectedUser.dateList.Contains(args.Date);
     }
 
     async Task OnChange(DateTime? value, string name, string format)
@@ -431,10 +467,45 @@
             // Reset hours
             dailyhour = 0;
             weeklyhour = 0;
+            // Update selected Date
+            selectedDate = value?.Date;
             // Replot graphs
-            timedata = await RenderGraph(value?.Date);
-            viewdata = await RenderDonut(value?.Date);
-            daydata = await RenderBar(value?.Date);
+            timedata = await RenderGraph(selectedDate, selectedUser.name);
+            viewdata = await RenderDonut(selectedDate, selectedUser.name);
+            daydata = await RenderBar(selectedDate, selectedUser.name);
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine("Something's wrong?? " + ex.Message);
+        }
+    }
+
+    async Task OnUserSelected(object value, string name)
+    {
+        var str = value is IEnumerable<object> ? string.Join(", ", (IEnumerable<object>)value) : value;
+
+        Console.WriteLine($"{name} value changed to {str}");
+
+        try
+        {
+            // Display loaders
+            timedata = null;
+            viewdata = null;
+            daydata = null;
+            // Reset hours
+            dailyhour = 0;
+            weeklyhour = 0;
+            // Update selected User
+            selectedUser = Users.FirstOrDefault(u => u.name == str.ToString());
+
+            // Check if date is present
+            if (!selectedUser.dateList.Contains(selectedDate.Value))
+                selectedDate = selectedUser.dateList.Last();
+
+            // Replot graphs
+            timedata = await RenderGraph(selectedDate, selectedUser.name);
+            viewdata = await RenderDonut(selectedDate, selectedUser.name);
+            daydata = await RenderBar(selectedDate, selectedUser.name);
         }
         catch(Exception ex)
         {
